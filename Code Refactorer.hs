@@ -4,20 +4,43 @@ import qualified Data.Text as T
 
 --get the code
 badCode = readFile ("./se2s03/BadCode.java")
-parseFileText = do 
-					badCodeInString <- badCode
-					return badCodeInString
-					--let listOfLines = splitOn "\n" badCodeInString
-					--return listOfLines
-					--let listOfLinesAsStrings = listOfLines
-					--return listOfLinesAsStrings
-
-packingTest = T.splitOn(T.pack "\n")(parseFileText)
 					
+startConvert2 = do
+					textString <- badCode
+					let textLines = lines textString
+					return textLines
+
+--the book was called "learn you a haskell"
+startConvert = do
+	textString <- badCode
+	let textLines = lines textString
+	let indexOfStartOfFirstFunction = findFunctions textLines
+	let reachEndOfFunction = findNextReturnStatment (textLines)(indexOfStartOfFirstFunction)
+	let getReturningVariable = returningVariable (reachEndOfFunction)
+	return reachEndOfFunction 
+					
+
+--
+returningVariable (x:xs) = 	if x == " " then
+								returningVariable (xs)
+							else if 
+
 -- find all the main functions
-findFunctions :: [[Char]] -> Int
-findFunctions (x:xs) = if "\tprivate int func1(int inputParam){" == x then
+--findFunctions :: [[Char]] -> Int
+findFunctions (x:xs) = if lineContains (x)("func") && lineContains(x)("private") then
 							0 -- return xs
-						else 
-							1 + findFunctions (x:xs)
---findFunctions x = "found nothing"
+						else
+							1 + findFunctions (xs)
+
+findNextReturnStatment (list) index = 	if lineContains(list !! (index)) ("return") then
+											index -- return xs
+										else
+											findNextReturnStatment (list)(index + 1)					
+
+--
+lineContains (x:xs) (y:ys) = 	if x == y then
+									lineContains(xs)(ys)
+								else
+									lineContains(xs)(y:ys)
+lineContains _ "" = True	
+lineContains "" (y:ys) = False
