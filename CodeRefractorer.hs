@@ -34,10 +34,11 @@ valuesOfGlobalVariables (line:lines) =
 valuesOfGlobalVariables emptyList = emptyList
 
 globalVariableWithValue (l:ls) =
-	if (isVariable(getToken(l))) then [getToken(l)] ++ 
-	
-getValue(IdentTok name) rest = [name]
-getValue(Op_Minus) (x:xs) = [-1 * getValue(x)]
+	if(getToken(l) == SemiColon || getToken(l) == Op_Equal)
+		globalVariableWithValue (ls)
+	else
+		[l] ++ globalVariableWithValue(ls)
+globalVariableWithValue emptyList = []
 
 --find values of global variables
 --valuesOfGlobalVariables (line:lines) = getFunctionCode2 ("badCode") (line:lines)
