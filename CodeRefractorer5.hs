@@ -1,57 +1,38 @@
+--import Data.List.Split
+--import Text.Read
+--import qualified Data.Text as T
 import Language.Java.Lexer
-main = startConvert
 
-listOfFunctionNames = ["func1", "func2", "func3", "func4", "func5", "func6"]
+main = startConvert
 
 --get the code
 badCode = readFile ("./se2s03/BadCode.java")
 			
 --learn you a haskelll for gread good			
 lexerTest text = lexer text	
+{-
+startConvert =
+	do 
+		textString <- badCode
+		return $ refactorFunctionCode $ reverse $ convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
 
---starts off by running this, (use main)
+refactorFunctionCode (line:lines) = 
+	getRidOfBlocks (line:lines) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
+-}
 startConvert =
 	do
 		textString <- badCode
 		let line:lines = reverse $ convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
 		let line2:lines2 = convertToListOfLines(lexerTest(textString))
 		return $ getRidOfBlocks (line2:lines2) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
---------------------------------start of get rid of blocks---------------------------------
+----------------------------start of get rid of blocks---------------------------------
 
---this part together just goes through the code and replaces the variables in the loop with the global variables
-getRidOfBlocks(allLines)(l:ls) = startGettingRidOfBlocks (l:ls) $ addLocalVariables $ valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines)
-
---add local variables;
---the input is the valuesofglobalvariables
-addLocalVariables x = x
-
---evaluateExpression x = 
-
---startGettingRidOfBlocks :: [[L Token]] -> [[L Token]] -> [[L Token]]
-startGettingRidOfBlocks (line:lines) (vars)= 
-	if lineContainsLoop(line) then 
-		[handleIfStatement(line)(vars)] ++ startGettingRidOfBlocks(lines)(vars)
-	else 
-		[line] ++ startGettingRidOfBlocks(lines)(vars)
-startGettingRidOfBlocks (emptyList)(vars) = []
-
---first replace the vars
-handleIfStatement(l:ls)(vars) = replaceTheVar(l)(vars) ++ handleIfStatement(ls)(vars)
-handleIfStatement(emptyList)(vars) = []
---replace 
-replaceTheVar(l)(var:vars) = 
-	if (getToken(l) == getToken(var !! 0)) then
-		(drop 1 (var)) ++ replaceTheVar(l)(vars)
-	else if (getToken(l) == KW_This || getToken(l) == Period)then 
-		[]--remove the this.period if its there
-	else
-		replaceTheVar(l)(vars)
-replaceTheVar(l)(emptyList) = [l]
+getRidOfBlocks(allLines)(l:ls) = valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines)
 
 valuesOfGlobalVariables :: [[L Token]] -> [[L Token]]
 valuesOfGlobalVariables (line:lines) =
 	if globalVariableWithValue (line) == [] then
-		[]
+		[] -- ++ valuesOfGlobalVariables lines
 	else
 		[globalVariableWithValue (line)] ++ valuesOfGlobalVariables lines
 valuesOfGlobalVariables emptyList = emptyList
@@ -59,11 +40,11 @@ valuesOfGlobalVariables emptyList = emptyList
 globalVariableWithValue (l:ls) =
 	if (getToken(l) == Op_Minus || isAnyVariable(getToken(l))) then [l] ++ globalVariableWithValue(ls)
 	else if(getToken(l) == SemiColon || getToken(l) == Op_Equal) then
-	globalVariableWithValue(ls)
-	else []
+	globalVariableWithValue(ls)--globalVariableWithValue (ls) 
+	else []--[l] ++ globalVariableWithValue(ls)
 globalVariableWithValue emptyList = []
 
---check if the input has a tok constructor
+
 isAnyVariable (IntTok a) = True
 isAnyVariable (LongTok a) = True
 isAnyVariable (DoubleTok a) = True
@@ -73,6 +54,12 @@ isAnyVariable (StringTok a) = True
 isAnyVariable (BoolTok a) = True
 isAnyVariable (IdentTok a) = True
 isAnyVariable x = False
+--find values of global variables
+--valuesOfGlobalVariables (line:lines) = getFunctionCode2 ("badCode") (line:lines)
+
+--takes in a list of lines instead of the normal list
+--getFunctionCode2 (name)(line:lines) = lines--findReturn2 $ findFunction2 name (x:xs)
+--finds the return statement and returns everything in the middle
 
 ----finds the function declaration with the name equal to the variable
 findFunction2 (name)(lines) =
@@ -91,7 +78,16 @@ findEndOfFunc2 (line:lines)(total) =
 	else if lineContains (line)(CloseCurly) then
 		1 + findEndOfFunc2 (lines)(total-1)
 	else 1 + findEndOfFunc2 (lines)(total) 
----------------------------------end of get rid of blocks-----------------------------------
+{-findFunction (name)(x:xs) =
+	if getToken(x) == IdentTok(name) then 
+		if getToken(xs!!1) == KW_Int then 
+			[x] ++ xs
+		else
+			findFunction (name)(xs)
+	else 
+		(findFunction (name)(xs))
+findFunction (name)(y) = []-}
+------------------------------end of get rid of blocks-----------------------------------
 
 
 --remove Empty Loops
@@ -228,14 +224,3 @@ startConvert3 =
 	do 
 		textString <- badCode
 		return $ reverse $ convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
-{-
-getValue :: (L a) -> a
-getValue (IntTok a) = a
-getValue (LongTok a) = a
-getValue (DoubleTok a) = a
-getValue (FloatTok a) = a
-getValue (CharTok a) = a
-getValue (StringTok a) = a
-getValue (BoolTok a) = a
-getValue (IdentTok a) = a
--}
