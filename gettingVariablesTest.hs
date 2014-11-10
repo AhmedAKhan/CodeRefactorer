@@ -10,31 +10,92 @@ badCode = readFile ("./se2s03/BadCode.java")
 			
 --learn you a haskelll for gread good			
 lexerTest text = lexer text	
-{-
-startConvert =
-	do 
-		textString <- badCode
-		return $ refactorFunctionCode $ reverse $ convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
 
-refactorFunctionCode (line:lines) = 
-	getRidOfBlocks (line:lines) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
--}
 startConvert =
 	do
 		textString <- badCode
-		let allLines = convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
-		let (line:lines) = reverse $ allLines
-		let line2:lines2 = convertToListOfLines(lexerTest(textString))
-		--return (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
-		return $ getRidOfBlocks (line2:lines2) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
-----------------------------start of get rid of blocks---------------------------------
+		let allLines = convertToListOfLines $ lexerTest $ textString
+		let functionLines = convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
+		--let globalVariables = valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (functionLines)
+		return $ findLocalVariables(functionLines)-- $ getLocalVariables $ function1Lines 
+-----		
+-------get local variables
+{-
+getLocalVariables (line:lines) = if ((lineContains(line)(KW_Double) || lineContains(line)(KW_Int)) && lineContains(line)(Op_Equal)) then [globalVariableWithValue2(line)] ++ getLocalVariables(lines) else getLocalVariables(lines)
+getLocalVariables (emptyList) = []
+-}
+--localVariableWithValue(l:ls) = 
+findLocalVariables (line:lines)= if fillInValueForLocalVariables(line) /= [] then [fillInValueForLocalVariables(line)] ++ findLocalVariables (lines) else findLocalVariables (lines)
+findLocalVariables (emptyList) = []
 
-getRidOfBlocks(allLines)(l:ls) = replaceAllBools(valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines))(l:ls)
+fillInValueForLocalVariables (l:ls)
+	| getToken(l) /= KW_Int && getToken(l) /= KW_Double = []
+	| not $ isAnyVariable(getToken(ls !! 0)) = []
+	| getToken(ls!!1) /= Op_Equal = []
+	| otherwise =  [ls!!0] ++ (take (length ls - 3)(drop 2 ls))
+fillInValueForLocalVariables emptyList = []
+-----end of get local variables
+
+-----------------------get global variables
+getGlobalVariablesNames(line:lines)
+	| l1 == KW_Final = getGlobalVariablesNames ( [drop 1 line] ++ lines)
+	| l1 /= KW_Private && l1 /= KW_Public = getGlobalVariablesNames(lines)
+	| l2 /= KW_Int && l2 /= KW_Double = getGlobalVariablesNames(lines)
+	| length line == 4 = [[line !! 2]] ++  getGlobalVariablesNames(lines)
+	where l1 = getToken(line !! 0)
+	      l2 = getToken(line !! 1)
+getGlobalVariablesNames(emptyList) = []
+
+getGlobalVariables(line:lines)(globalVariables) =
+	if lineContains(line)(IdentTok "func1") then globalVariables
+	else getGlobalVariables(lines)(newGlobalVariables)
+	where newGlobalVariables = fillInValueForGlobalVariables(line)(globalVariables) 
+getGlobalVariables (emptyList)(globalVariables) = globalVariables
+
+fillInValueForGlobalVariables (l:ls)(globalVariables)
+	| pos == -1 = globalVariables
+	| getToken(ls!!0) /= Op_Equal = globalVariables --l:ls ++ [L (0,0) (IdentTok "2")]
+	| otherwise = take (pos) globalVariables ++ [(globalVariables !! pos) ++ rest] ++ drop (pos + 1) globalVariables
+	where pos = isIn2DList(l)(globalVariables)
+	      rest = take (length ls - 2) (drop 1 ls)
+fillInValueForGlobalVariables emptyList globalVariables = globalVariables
+
+--takes in an item in and checks if it is in the global variables and in which position
+isIn2DList (item)(varIL:varsIL)
+  | getToken(item) == var = 0
+  | itemPosition == -1 = -1
+  | otherwise = 1 + itemPosition
+  where var = getToken(varIL !! 0)
+        itemPosition = isIn2DList (item)(varsIL)
+isIn2DList (item)(emptyList) = -1
+------------------------------------get global variables
+	----------------------------start of get rid of blocks---------------------------------
+
+getRidOfBlocks(globalVariables)(line:lines) = globalVariables --findAndReplaceAllGlobalVariables(line:lines)(globalVariables)--replaceAllBools(globalVariables)(replaceGlobalVariables(lines))
 --getRidOfBlocks(allLines)(l:ls) = valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines)
+
+--finds line that contains a global variable and replaces it with the value of the global variable
+findAndReplaceAllGlobalVariables (line:lines)(globalVariables)
+	| lineContains(line)(KW_This) = [findAndReplaceVariableInLine(line)(globalVariables)] ++ findAndReplaceAllGlobalVariables(lines)(globalVariables)
+	| otherwise = [line] ++ findAndReplaceAllGlobalVariables(lines)(globalVariables)
+findAndReplaceAllGlobalVariables (emptyList)(globalVariables) = []
+
+--finds all the lines that contain a global variable and replaces them with the value of the global variable
+findAndReplaceVariableInLine(l:ls)(globalVariables)
+	| getToken(l) == KW_This 	= replaceVariableWith(l)(globalVariables) ++ findAndReplaceVariableInLine(drop 2 ls)(globalVariables)
+	| otherwise = [l] ++ findAndReplaceVariableInLine(ls)(globalVariables)
+findAndReplaceVariableInLine(emptyList)(_) = []
+	
+--l is the variable and it replaces it with the correct variable
+replaceVariableWith (l) (var:vars) = [L (0,0) (IdentTok "asdasdsa")] {-
+	|  pos > -1 = drop 1 ((var:vars) !! pos)
+	| otherwise = replaceVariableWith(l)(vars)
+	where 	pos = findLineContainingVar(var)(l) -}
+replaceVariableWith(l)(emptyList) = [L (1,1) (IdentTok "a")]
 
 replaceAllBools(gVar:gVars)(line:lines) = if containsBool(line) then replaceBool(line)(gVar:gVars)(getLocalVariables(line:lines)) else replaceAllBools(gVar:gVars)(lines)--if lineContains(line)(Op_Equals) then line else replaceAllBools (var:vars)(lines) --if lineContainsList(line)(var) then line else replaceAllBools(var:vars)(lines)
 replaceAllBools(var:vars)(emptyList) = []
---replaceAllBools (l)(b) = b ------------should never get called-------
+replaceAllBools (l)(b) = [] -----------might get called------
 
 --replaces the bool with an actual vakue
 replaceBool(line)(gVar:gVars)(lVar:lVars) = replaceValues(line)(gVar:gVars)(lVar:lVars)
@@ -76,15 +137,15 @@ isDouble (L pos (DoubleTok x)) = True
 isDouble (L pos y) = False
 
 
-getLocalVariables (line:lines) = if ((lineContains(line)(KW_Double) || lineContains(line)(KW_Int)) && lineContains(line)(Op_Equal)) then [globalVariableWithValue(line)] ++ getLocalVariables(lines) else getLocalVariables(lines)
+getLocalVariables (line:lines) = if ((lineContains(line)(KW_Double) || lineContains(line)(KW_Int)) && lineContains(line)(Op_Equal)) then [] else [] --[globalVariableWithValue(line)] ++ getLocalVariables(lines) else getLocalVariables(lines)
 getLocalVariables (emptyList) = []
 
 --localVariableWithValue(l:ls) = 
-
+{-
 valuesOfGlobalVariables :: [[L Token]] -> [[L Token]]
 valuesOfGlobalVariables (line:lines) =
 	if globalVariableWithValue (line) == [] then
-		[] -- ++ valuesOfGlobalVariables lines
+		[globalVariableWithValue(line)] -- ++ valuesOfGlobalVariables lines
 	else
 		[globalVariableWithValue (line)] ++ valuesOfGlobalVariables lines
 valuesOfGlobalVariables emptyList = emptyList
@@ -95,7 +156,7 @@ globalVariableWithValue (l:ls) =
 	globalVariableWithValue(ls)--globalVariableWithValue (ls) 
 	else []--[l] ++ globalVariableWithValue(ls)
 globalVariableWithValue emptyList = []
-
+-}
 isAnyVariable (IntTok a) = True
 isAnyVariable (LongTok a) = True
 isAnyVariable (DoubleTok a) = True

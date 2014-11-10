@@ -45,7 +45,7 @@ public class BadCode {
             v998 = x1 - x2;
         }
         else {
-			x4 = x4 * (x5 + this.x4);
+            x4 = x4 * (x5 + this.x4);
             this.x4 = Math.sin(this.x4);
         }
         while (-3 == x2) {

@@ -22,19 +22,38 @@ refactorFunctionCode (line:lines) =
 startConvert =
 	do
 		textString <- badCode
-		let allLines = convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
-		let (line:lines) = reverse $ allLines
-		let line2:lines2 = convertToListOfLines(lexerTest(textString))
+		let functionLines = convertToListOfLines $ getFunctionCode ("func1") (lexerTest (textString))
+		let (line:lines) = reverse $ functionLines
+		--let line2:lines2 = convertToListOfLines(lexerTest(textString))
+		let globalVariables = valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (functionLines)
 		--return (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
-		return $ getRidOfBlocks (line2:lines2) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
+		return $ getRidOfBlocks (globalVariables) (removeEmptyLoops $ reverse $ removeUnusedVariables(line:lines) ([getToken((lines !! 0) !! 1)]))
 ----------------------------start of get rid of blocks---------------------------------
 
-getRidOfBlocks(allLines)(l:ls) = replaceAllBools(valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines))(l:ls)
+getRidOfBlocks(globalVariables)(line:lines) = replaceGlobalVariables(lines)(globalVariables)--replaceAllBools(globalVariables)(replaceGlobalVariables(lines))
 --getRidOfBlocks(allLines)(l:ls) = valuesOfGlobalVariables $ drop 1 $ findFunction2 (IdentTok "badCode") (allLines)
+
+--finds the line that contains a global variable and replaces it
+replaceGlobalVariables (line:lines)(globalVariables)
+	| lineContains(line)(KW_This) = replaceGlobalVariables(line)(globalVariables) ++ replaceGlobalVariables(lines)(globalVariables)
+	| otherwise = replaceGlobalVariables(lines)(globalVariables)
+replaceGlobalVariables (emptyList)(globalVariables) = []
+
+replaceGlobalVariables (l:ls)(globalVariables)
+	| (lineContains(l:ls)(KW_This)) = replaceVariableWith(l:ls)(globalVariables) -- ++ replaceGlobalVariables(lines)(globalVariables)
+	| otherwise = [line] ++ replaceGlobalVariables(lines)(globalVariables)
+replaceGlobalVariables(emptyList)(_) = []
+
+--l is the variable and it replaces it with the correct variable
+replaceVariableWith (l) (var:vars) = [l]{-
+	|  pos > -1 = drop 1 ((var:vars) !! pos)
+	| otherwise = replaceVariableWith(l)(vars)
+	where 	pos = findLineContainingVar(var)(l) -}
+replaceVariableWith(l)(emptyList) = []
 
 replaceAllBools(gVar:gVars)(line:lines) = if containsBool(line) then replaceBool(line)(gVar:gVars)(getLocalVariables(line:lines)) else replaceAllBools(gVar:gVars)(lines)--if lineContains(line)(Op_Equals) then line else replaceAllBools (var:vars)(lines) --if lineContainsList(line)(var) then line else replaceAllBools(var:vars)(lines)
 replaceAllBools(var:vars)(emptyList) = []
---replaceAllBools (l)(b) = b ------------should never get called-------
+replaceAllBools (l)(b) = [] -----------might get called------
 
 --replaces the bool with an actual vakue
 replaceBool(line)(gVar:gVars)(lVar:lVars) = replaceValues(line)(gVar:gVars)(lVar:lVars)

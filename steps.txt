@@ -1,0 +1,113 @@
+First It will go to all the functions and condense them into one line
+the function getReturn is going to iterate through every single element of the namesOfFunctions list
+ In human terms its gonna do what I say next 5 times
+
+func1
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func1
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func1
+func2
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func2
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func2
+func3
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func3
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func3
+func4
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func4
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func4
+func5
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func5
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func5
+func6
+	-first it converts the string to a lexed string
+	-Then it converts the lexed code into a list list of lines, where each line is represented by a list of (L Token)'s
+	-Then it gets the values of all the global variables and stores them into a list
+	-Gets the lines just for func6
+	-now and finds and replaces all the global variables
+	-takes all the loacal variables and stores them into a list
+	-Now it goes backwords through the function and gets rid of any line that can not directly influence the return statement
+	-It does this by removing any line of code that does not change the value of any variable that has not been mentioned yet
+	-Removes all empty blocks
+	-removes all the variable declaration in the function
+	-Now it starts parsing the data
+	-It is now going from top to bottem
+	-every time it sees a statement and adjusts the local variable list to take into account for the change this line made
+	-If it passes by an if statment or while loop, It checks if the value of the bool will be True or False
+	-For the if statment it will just delete the else or if block depending on the result
+	-now it is done parsing the data for the function func6
+
+
+now it will lex the returned data
+Now it will replace all the inputParam variables with their associative var(n) value
+converting all the lexed data back into a list
+combining all the seperate strings into one
+Now it is puting the result into a badCode.java file. into a java code template 

@@ -1,0 +1,32 @@
+        x1 = -4;
+        x2 = -4;
+        x3 = -3;
+        x4 = 5.509789193905533;
+        x5 = 9.842415498172059;
+        x6 = 24.176045683662835;
+
+private int func1(int inputParam) {
+	return 11 - inputParam - 11 - -4 + 11 - -4;
+}
+
+private double func2(int inputParam) {
+	return 9.842415498172059 + -4;
+}
+
+private int func3(int inputParam) {
+	return inputParam + -3;
+}
+
+private int func4(int inputParam) {
+	return -16 - -4 - -3;
+}
+
+private double func5(int inputParam) {
+	return (inputParam + -4 - -4) * (inputParam + -4);
+}
+
+private int func6(int inputParam) {
+	return inputParam + -4;
+}
+
+11 - var1 - 11 - -4 + 11 - -4 + 9.842415498172059 + -4 + var3 + -3 + -16 - -4 - -3 + (var5 + -4 - -4) * (var5 + -4) + var6 + -4 + 0

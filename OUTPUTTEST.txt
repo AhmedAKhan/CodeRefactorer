@@ -31,7 +31,6 @@ private int func1(int inputParam) {
 private int func1(int inputParam) {
 	int x1 = this.x1;
 	int x2 = this.x2;
-	
 	int v998 = this.x3;
 	int v143 = 11;		
 	x2 = v143 - x2;			
@@ -65,4 +64,40 @@ private int func1(int inputParam) {
 	return v143;
 }
 
---get rid of the rest of the loops
+--replace all global variables with their values "modified the code so it does this part at the begining"
+private int func1(int inputParam) {
+	int x1 = -4;
+	int x2 = -4;
+	
+	int v998 = -3;
+	int v143 = 11;		
+	x2 = v143 - x2;			
+	x1 = v143 - inputParam;
+	if (14.176045683662835 < 24.17) {
+		v998 = x1 - x2;
+	}
+	v143 = v998 + x2;
+	return v143;
+}
+
+--removed the variable declaration
+private int func1(int inputParam) {	
+	x2 = v143 - x2;			
+	x1 = v143 - inputParam;
+	if (14.176045683662835 < 24.17) {
+		v998 = x1 - x2;
+	}
+	v143 = v998 + x2;
+	return v143;
+}
+
+--variable and there values(just the begining
+private int func1(int inputParam) {	
+	x2 = 11 - (-4);			
+	x1 = 11 - inputParam;
+	if (14.176045683662835 < 24.17) {
+		v998 = x1 - x2;
+	}
+	v143 = v998 + x2;
+	return v143;
+}
